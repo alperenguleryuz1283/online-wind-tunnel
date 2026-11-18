@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#202b2c" />
+    <title>Çevrimiçi Rüzgar Tüneli</title>
+    <link rel="stylesheet" href="assets/style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="brand"><i aria-hidden="true">≋</i> <span>Çevrimiçi Rüzgar Tüneli</span></div>
+      <div class="headname">Aerodinamik Laboratuvarı</div>
+      <nav class="languages" aria-label="Türkçe / English">
+        <a lang="tr" hreflang="tr" href="?lang=tr">Türkçe</a
+        ><a lang="en" hreflang="en" href="?lang=en">English</a>
+      </nav>
+      <span class="status" id="state">Akış etkin</span>
+    </header>
+    <main>
+      <div class="title">
+        <div>
+          <h1>Çevrimiçi Rüzgar Tüneli</h1>
+          <p>Üç boyutlu test düzeneği</p>
+        </div>
+        <button id="reset">↺ &nbsp; Sıfırla</button>
+      </div>
+      <nav class="labtools" aria-label="Deney araçları">
+        <button id="measure" aria-pressed="false">∠ &nbsp; Ölçüm katmanı</button
+        ><button id="compare" aria-pressed="false">
+          ◫ &nbsp; İki deneyi karşılaştır</button
+        ><button id="matchConditions" class="linked">
+          B’nin açı ve hızını A ile eşle</button
+        ><a class="liftLink" href="#lift">Kaldırma grafiği ↓</a
+        ><span class="linked">Kameralar birlikte hareket eder</span>
+      </nav>
+      <div class="bench">
+        <article id="experiment" aria-label="Deney A">
+          <div class="layout">
+            <section class="stage" aria-label="Etkileşimli üç boyutlu sahne">
+              <div class="stagehead">
+                <strong
+                  ><i class="dot"></i>
+                  <span class="singleLabel">Tünel görünümü</span
+                  ><span class="experimentLabel"></span
+                ></strong>
+                <div class="views" aria-label="Kamera açısı">
+                  <button data-view="genel" aria-pressed="true">Genel</button
+                  ><button data-view="yan">Yan</button
+                  ><button data-view="ust">Üst</button>
+                </div>
+              </div>
+              <div id="scene">
+                <div id="renderError" hidden>
+                  3D sahne için tarayıcınızda WebGL ve grafik hızlandırmayı
+                  etkinleştirin.
+                </div>
+              </div>
+              <svg id="measureOverlay" class="measurement" aria-hidden="true">
+                <line class="wind" data-mark="wind" />
+                <polyline class="wind" />
+                <line class="chord" data-mark="chord" />
+                <path class="angleArc" />
+                <path class="camber" />
+                <circle r="3" />
+                <circle r="3" />
+                <text></text>
+              </svg>
+              <div class="stagefoot">
+                <span><strong>→</strong> Akış yönü</span
+                ><span>Sürükle · döndür &nbsp; / &nbsp; Kaydır · yakınlaş</span>
+              </div>
+            </section>
+            <aside>
+              <h2>Deney kontrolleri</h2>
+              <label class="profileChoice"
+                >Kanat profili<select id="foilChoice">
+                  <option value="0012">NACA 0012</option>
+                  <option value="2412">NACA 2412</option>
+                </select></label
+              >
+              <div class="control">
+                <label for="angle">Hücum açısı</label
+                ><output id="angleVal" for="angle"></output
+                ><input
+                  id="angle"
+                  type="range"
+                  min="-10"
+                  max="20"
+                  step="0.5"
+                  value="4"
+                />
+                <div class="ends"><span>−10°</span><span>+20°</span></div>
+              </div>
+              <div class="control">
+                <label for="speed">Hava hızı</label
+                ><output id="speedVal" for="speed"></output
+                ><input id="speed" type="range" min="0" max="50" value="20" />
+                <div class="ends"><span>0 m/s</span><span>50 m/s</span></div>
+              </div>
+              <h3>Görünürlük</h3>
+              <label class="switch"
+                >Akış çizgileri<input
+                  id="lines"
+                  type="checkbox"
+                  checked /><i></i></label
+              ><label class="switch"
+                >Kanatta Cp renkleri<input
+                  class="paintToggle"
+                  type="checkbox"
+                  checked /><i></i></label
+              ><label class="switch"
+                >Cam paneller<input
+                  id="glass"
+                  type="checkbox"
+                  checked /><i></i></label
+              ><button id="play" class="primary"></button>
+            </aside>
+          </div>
+          <section class="pressureCard">
+            <div class="parthead">
+              <h2>Basınç dağılımı</h2>
+              <small class="cpCase"></small>
+            </div>
+            <div class="cpColorKey">
+              <span>Kanatta Cp</span><b class="lowCp"></b
+              ><i class="scaleBar"></i><b class="highCp"></b>
+            </div>
+            <p class="cpGuide">
+              Renkler 2B kesit hesabını kanat açıklığı boyunca gösterir.
+              Grafikte bir eğriye veya kanadın renkli yüzeyine tıklayarak ölçüm
+              noktasını seç.
+            </p>
+            <p class="cpLegend"><span>Üst yüzey</span><span>Alt yüzey</span></p>
+            <canvas
+              class="cpPlot"
+              role="img"
+              aria-label="Üst ve alt yüzey basınç katsayısı, veter boyunca; negatif Cp yukarıda"
+            ></canvas
+            ><label class="probeChoice"
+              >İşaretli yüzey
+              <select class="probeSide">
+                <option value="upper">Üst yüzey</option>
+                <option value="lower">Alt yüzey</option>
+              </select></label
+            ><label class="probeLabel"
+              >Ölçüm konumu (x/c) <output class="stationValue">0,40</output
+              ><input
+                class="station"
+                type="range"
+                min="0"
+                max="100"
+                step=".1"
+                value="40"
+            /></label>
+            <p class="cpReadout"></p>
+            <p class="caseLift"></p>
+            <details>
+              <summary>Hesap yöntemi ve birimler</summary>
+              <p>
+                Hess–Smith yöntemi, iki boyutlu profil çevresindeki
+                sıkıştırılamaz, viskozitesiz ve yüzeye bağlı akışı 160 panelle
+                çözer. Cp = 1 − (Vₜ/V∞)². Parantezdeki değer serbest akıma göre
+                basınç farkıdır (Δp = ½ρV∞²Cp, ρ = 1,225 kg/m³). Bu modelde
+                sabit açıda hız değiştiğinde Cp aynı kalır. Akış ayrılması,
+                stall ve tünel duvarlarının etkileri model kapsamı dışındadır.
+              </p>
+            </details>
+          </section>
+          <div class="legend">
+            <span class="chordKey">Veter çizgisi</span
+            ><span class="camberKey">Ortalama eğrilik çizgisi</span
+            ><span class="windKey">Hava yönü</span><span>α · Hücum açısı</span>
+          </div>
+          <div class="details">
+            <section>
+              <h2>Kanat kesiti <small id="sectionName">NACA 0012</small></h2>
+              <canvas
+                id="profile"
+                aria-label="Hücum açısına göre dönen kanat kesiti"
+              ></canvas>
+            </section>
+            <section>
+              <div class="parthead">
+                <label for="part">Parça inceleme</label
+                ><select id="part">
+                  <option value="wing">Kanat</option>
+                  <option value="inlet">Hava girişi</option>
+                  <option value="test">Test bölmesi</option>
+                  <option value="fan">Fan</option>
+                </select>
+              </div>
+              <p id="info"></p>
+            </section>
+          </div>
+        </article>
+      </div>
+      <section
+        id="lift"
+        class="pressureCard liftCard"
+        aria-labelledby="liftTitle"
+      >
+        <div class="parthead">
+          <h2 id="liftTitle">Kaldırma katsayısı ve hücum açısı</h2>
+          <small>2B profil · 160 panel</small>
+        </div>
+        <p class="liftLegend">
+          <span>NACA 0012 <b id="lift0012"></b></span
+          ><span>NACA 2412 <b id="lift2412"></b></span>
+        </p>
+        <svg
+          id="liftPlot"
+          role="img"
+          aria-label="NACA 0012 ve 2412 için hücum açısına göre kesit kaldırma katsayısı"
+        ></svg
+        ><label class="probeLabel"
+          >Karşılaştırma açısı <output id="liftDegrees" for="liftProbe"></output
+          ><input
+            class="station"
+            id="liftProbe"
+            type="range"
+            min="-10"
+            max="20"
+            step="0.5"
+            value="0"
+        /></label>
+        <p class="liftNote">
+          Eğriler, sıfırdan farklı hava hızında ve yüzeye bağlı akış için
+          hesaplanmıştır. Yüksek açılarda akış ayrılması ve stall etkileri
+          modelin kapsamı dışındadır.
+        </p>
+        <details>
+          <summary>Cp’den kaldırma nasıl bulunuyor?</summary>
+          <p>
+            Her panelde basınç kuvveti yüzeye dik etkir. Hesap, panelin basınç
+            katsayısını (Cp) veter uzunluğuna oranlanmış panel uzunluğuyla
+            çarpar ve kuvvetleri yönleriyle toplar. Toplamın serbest akıma dik
+            bileşeni kesit kaldırma katsayısını (cₗ) verir. Grafikte iki profil
+            aynı açıda okunur.
+          </p>
+        </details>
+      </section>
+      <footer>
+        <i class="dot"></i> Akış çizgileri temsili eğitim animasyonudur.
+      </footer>
+    </main>
+    <script src="src/language.js"></script>
+    <script src="vendor/three/three.min.js"></script>
+    <script src="src/airfoils.js"></script>
+    <script src="src/model.js"></script>
+    <script src="src/pressure.js"></script>
+    <script src="src/surface-pressure.js"></script>
+    <script src="src/pressure-view.js"></script>
+    <script src="src/app.js"></script>
+    <script src="src/lift-view.js"></script>
+  </body>
+</html>
